@@ -1,5 +1,6 @@
 from Tray import Tray
 from Configure import Configure
+from FunctionalWindows import ExitChoose
 import PySide6.QtCore
 from PySide6.QtWidgets import QApplication, QMainWindow, QMenu, QDockWidget, QSystemTrayIcon, QTabWidget, QWidget, QVBoxLayout, QMessageBox
 from PySide6.QtCore import Qt
@@ -19,10 +20,6 @@ class MainWindow(QMainWindow,Configure):
         self.dockwidgets = []
         self.create_dockwidget('1')
 
-        
-    
-
-
     def create_dockwidget(self,name):
         dockWidget = QDockWidget(name, self)
         dockWidget.setAllowedAreas(Qt.TopDockWidgetArea |
@@ -31,9 +28,22 @@ class MainWindow(QMainWindow,Configure):
         self.dockwidgets.append(dockWidget)
     
     def closeEvent(self, event):
+        if self.exittype==None:
+            chooseWindow = ExitChoose()
+            chooseWindow.show()
+            chooseWindow._signal.connect(self.exit_change)
+        if self.exittype==0:
+            self.close()
+        else:
+            event.ignore()
+            self.hide()
+    
+    def exit_change(self,lst):  # 放到核心类里
+        self.exittype = lst[0]
+        if lst[1]:
+            self.writeconfig('exit')
+        
 
-        event.ignore()
-        self.hide()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)  # 创建APP，将运行脚本时（可能的）的其他参数传给Qt以初始化

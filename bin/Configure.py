@@ -3,6 +3,7 @@ class Configure():
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
         self.config_path = "localalert.ini"
+        self.exittype = None  # 0:quit->exit ; 1:quit->tray
         self.readconfig()
     
     def readconfig(self):
