@@ -3,9 +3,9 @@ class Configure():
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
         self.config_path = "localalert.ini"
-        self.exittype = None  # 0:quit->exit ; 1:quit->tray
+        #self.exittype = None  # 0:quit->exit ; 1:quit->tray
         self.readconfig()
-    
+
     def readconfig(self):
         try:
             self.config.read(self.config_path, encoding="utf-8")
@@ -13,12 +13,13 @@ class Configure():
             print('failure: readconfig')
             return
 
-        try:
-            self.exittype = self.config.getint('exit','exit')
-        except:
-            print('config: error in exit type')
-            pass
+        # try:
+        #     self.exittype = self.config.getint('exit','exit')
+        # except:
+        #     print('config: error in exit type')
+        #     pass
     def writeconfig(self,type):
-        if type == 'exit':
-            self.config.set('exit','exit',str(self.exittype))
-            self.config.write(open("localalert.ini", "w"))
+        # if type == 'exit':
+        #     self.config.set('exit','exit',str(self.exittype))
+        #     self.config.write(open("localalert.ini", "w"))
+        pass
