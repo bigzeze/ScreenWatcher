@@ -1,7 +1,7 @@
 from ScreenWatcherCore import SWCore
 import PySide6.QtGui
 from PySide6.QtWidgets import QApplication,QWidget,QDockWidget,QLabel,QPushButton,QVBoxLayout,QHBoxLayout
-from PySide6.QtCore import Qt,Signal
+from PySide6.QtCore import Qt,Signal,Slot
 from PySide6.QtGui import QCloseEvent
 import sys
 
@@ -29,6 +29,10 @@ class WatcherUI(QWidget,SWCore):
         self.noticeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.configButton = QPushButton('Setting')
         self.stateButtion = QPushButton('Start Watch')
+
+        self.configButton.clicked.connect(self.configButtonClicked)
+        self.stateButtion.clicked.connect(self.stateBUttionClicked)
+
         hview = QHBoxLayout(self)
         hview.addWidget(self.graphLabel)
 
@@ -43,6 +47,13 @@ class WatcherUI(QWidget,SWCore):
         self.setLayout(hview)
 
     #在WatcherUI和SWCore里实现各种功能
+
+    def configButtonClicked(self):
+        pass
+
+    def stateBUttionClicked(self):
+        pass
+
     
 
 

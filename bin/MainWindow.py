@@ -40,10 +40,10 @@ class MainWindow(QMainWindow,Configure):
             wighet.setWindowTitle('Watcher '+str(idx+1))
             wighet.setIndex(idx)
 
-    def exit_change(self,lst):  # 放到核心类里
-        self.exittype = lst[0]
-        if lst[1]:
-            self.writeconfig('exit')
+    # def exit_change(self,lst):  # 放到核心类里
+    #     self.exittype = lst[0]
+    #     if lst[1]:
+    #         self.writeconfig('exit')
 
     def closeEvent(self, event):
         event.ignore()
