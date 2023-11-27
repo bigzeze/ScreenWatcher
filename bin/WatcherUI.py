@@ -1,12 +1,14 @@
 from ScreenWatcherCore import SWCore
-import PySide6.QtGui
+from SelectArea import SelectArea
+from ConfigUI import ConfigUI
+from PySide6.QtGui import QPixmap,QColor
 from PySide6.QtWidgets import QApplication,QWidget,QDockWidget,QLabel,QPushButton,QVBoxLayout,QHBoxLayout
 from PySide6.QtCore import Qt,Signal,Slot
-from PySide6.QtGui import QCloseEvent
+from PySide6.QtGui import QCloseEvent,QResizeEvent
 import sys
 
 class WatcherDock(QDockWidget):
-    _signal = Signal(int)
+    closeSignal = Signal(int)
     def __init__(self,name,idx):
         super().__init__(name)
         self.idx = idx
@@ -14,45 +16,67 @@ class WatcherDock(QDockWidget):
         self.setWidget(self.watcherui)
         
     def closeEvent(self, event: QCloseEvent) -> None:
-        self._signal.emit(self.idx)
+        self.closeSignal.emit(self.idx)
         return super().closeEvent(event)
     
     def setIndex(self,idx):
         self.idx =idx
 
-class WatcherUI(QWidget,SWCore):
-    
+class WatcherUI(SWCore):
+    resizeSignal = Signal()
     def __init__(self) -> None:
         super().__init__()
-        self.graphLabel = QLabel('graph label')
-        self.noticeLabel = QLabel('notice label')
+        self.graphLabel = QLabel()
+        self.graphLabel.setPixmap(QPixmap('icon.ico'))
+        self.noticeLabel = QLabel()
         self.noticeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.areaButton = QPushButton('Select Area')
         self.configButton = QPushButton('Setting')
         self.stateButtion = QPushButton('Start Watch')
 
+        self.areaButton.clicked.connect(self.areaButtonClicked)
         self.configButton.clicked.connect(self.configButtonClicked)
         self.stateButtion.clicked.connect(self.stateBUttionClicked)
 
-        hview = QHBoxLayout(self)
-        hview.addWidget(self.graphLabel)
+        hlayout = QHBoxLayout(self)
+        vlayout1 = QVBoxLayout(self)
+        vlayout1.addWidget(self.graphLabel)
+        vlayout1.addWidget(self.noticeLabel)
 
-        vview = QVBoxLayout(self)
-        vview.addWidget(self.noticeLabel)
-        vview.addWidget(self.configButton)
-        vview.addWidget(self.stateButtion)
-        vview.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        vlayout2 = QVBoxLayout(self)
+        vlayout2.addWidget(self.areaButton)
+        vlayout2.addWidget(self.configButton)
+        vlayout2.addWidget(self.stateButtion)
+        vlayout2.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        hview.addLayout(vview)
-
-        self.setLayout(hview)
+        hlayout.addLayout(vlayout1)
+        hlayout.addLayout(vlayout2)
+        self.setLayout(hlayout)
 
     #在WatcherUI和SWCore里实现各种功能
 
+    def areaButtonClicked(self):
+        self.endWatch()
+        self.selectArea = SelectArea()
+        self.selectArea.show()
+        self.selectArea._signal.connect(self.changeArea)
+
     def configButtonClicked(self):
-        pass
+        self.endWatch()
+        self.configUI = ConfigUI(self)
+        self.configUI.setWindowModality(Qt.WindowModality.ApplicationModal)
+        self.configUI.show()
+        self.configUI._signal.connect(self.changeSetting)
 
     def stateBUttionClicked(self):
-        pass
+        if self.watchStatus == False:
+            self.startWatch()
+        else:
+            self.endWatch()
+    
+    def resizeEvent(self, event: QResizeEvent) -> None:
+        self.resizeSignal.emit()
+        return super().resizeEvent(event)
 
     
 

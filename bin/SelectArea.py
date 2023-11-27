@@ -1,6 +1,6 @@
-from PySide6.QtWidgets import *
-from PySide6.QtGui import *
-from PySide6.QtCore import *
+from PySide6.QtWidgets import QApplication,QWidget
+from PySide6.QtGui import QBitmap,QPainter,QPen,QBrush
+from PySide6.QtCore import Qt,Signal,QPoint,QRect,QSize
 import sys
 
 
@@ -51,11 +51,17 @@ class WScreenShot(QWidget):
         if event.button() == Qt.LeftButton:
             self.endPoint = event.pos()
             self.close()
-            self._signal.emit([self.detectscreen,self.startPoint.x(),self.startPoint.y(),self.endPoint.x(),self.endPoint.y()])
+            ratio = self.detectscreen.devicePixelRatio()
+            print(self.startPoint,self.endPoint)
+            self.startPoint,self.endPoint = QPoint(min(self.startPoint.x(),self.endPoint.x())*ratio,min(self.startPoint.y(),self.endPoint.y())*ratio),\
+                                            QPoint(max(self.startPoint.x(),self.endPoint.x())*ratio,max(self.startPoint.y(),self.endPoint.y())*ratio)
+            print(self.startPoint,self.endPoint)
+            self._signal.emit([self.detectscreen,QRect(self.startPoint,self.endPoint)])
 
-class SelectArea():
+class SelectArea(QWidget):
     _signal = Signal(list)
     def __init__(self) -> None:
+        super(SelectArea,self).__init__()
         self.detectscreens = QApplication.screens()
         self.windows = [WScreenShot(screen) for screen in self.detectscreens]
     
@@ -65,14 +71,23 @@ class SelectArea():
             window._signal.connect(self.get_signal)
     
     def get_signal(self,lst):
+        detscreen = lst[0]
+        index = None
+        for idx,screen in enumerate(self.detectscreens):
+            if screen==detscreen:
+                index = idx
+                break
+
         for window in self.windows:
             window.close()
         #print(lst)
-        self._signal.emit(lst)
+        self._signal.emit([index,lst[1]])
+
     
 if __name__ == '__main__':
     app = QApplication([])
     win = SelectArea()
     # win.setWindowFlags(Qt.WindowStaysOnTopHint)
+
     win.show()
     app.exec_()

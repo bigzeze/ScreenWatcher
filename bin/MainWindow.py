@@ -31,7 +31,8 @@ class MainWindow(QMainWindow,Configure):
         dockWidget.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dockWidget)
         self.dockwidgets.append(dockWidget)
-        dockWidget._signal.connect(self.delete_dockwidget)
+        dockWidget.closeSignal.connect(self.delete_dockwidget)
+        dockWidget.watcherui.resizeSignal.connect(self.adjustSize)
     
     def delete_dockwidget(self,index):
         print(index)
