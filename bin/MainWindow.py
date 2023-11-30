@@ -1,16 +1,13 @@
 from Tray import Tray
-from Configure import Configure
-from WatcherUI import WatcherDock
-#from FunctionalWindows import ExitChoose
-import PySide6.QtCore
-from PySide6.QtWidgets import QApplication, QMainWindow, QMenu, QDockWidget, QSystemTrayIcon, QTabWidget, QWidget, QVBoxLayout, QMessageBox
-from PySide6.QtCore import Qt
-from PySide6.QtGui import QIcon,QPixmap,QAction
+from ScreenWatcher import ScreenWatcher
+from PySide6.QtWidgets import QApplication, QMainWindow, QDockWidget
+from PySide6.QtCore import Qt,Signal
+from PySide6.QtGui import QIcon,QPixmap,QCloseEvent
 
 import sys
 from qt_material import apply_stylesheet
 
-class MainWindow(QMainWindow,Configure):
+class MainWindow(QMainWindow):
     def __init__(self,*args,**kargs):
         super().__init__(*args,**kargs)
         self.setWindowTitle('Screen Watcher')
@@ -32,7 +29,7 @@ class MainWindow(QMainWindow,Configure):
         self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dockWidget)
         self.dockwidgets.append(dockWidget)
         dockWidget.closeSignal.connect(self.delete_dockwidget)
-        dockWidget.watcherui.resizeSignal.connect(self.adjustSize)
+        dockWidget.screenwatcher.resizeSignal.connect(self.adjustSize)
     
     def delete_dockwidget(self,index):
         print(index)
@@ -50,6 +47,22 @@ class MainWindow(QMainWindow,Configure):
         event.ignore()
         self.hide()
         
+
+class WatcherDock(QDockWidget):
+    closeSignal = Signal(int)
+    def __init__(self,name,idx):
+        super().__init__(name)
+        self.idx = idx
+        self.screenwatcher = ScreenWatcher(self.idx)
+        self.setWidget(self.screenwatcher)
+        
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.closeSignal.emit(self.idx)
+        return super().closeEvent(event)
+    
+    def setIndex(self,idx):
+        self.idx =idx
+        self.screenwatcher.setIndex(idx)
 
 
 if __name__ == "__main__":

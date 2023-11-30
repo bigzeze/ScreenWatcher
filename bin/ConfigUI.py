@@ -5,11 +5,11 @@ import sys
 
 class ConfigUI(QWidget):
     _signal = Signal(list)
-    def __init__(self,parent):
+    def __init__(self,args):
         super(ConfigUI,self).__init__()
-        self.parnt = parent
-        self.templetePath = parent.templetePath
-        self.audioPath = parent.audioPath
+        self.args = args
+        self.templetePath = args[0]
+        self.audioPath = args[1]
 
         self.setWindowTitle('Setting')
         self.icon = QIcon(QPixmap('icon.ico'))
@@ -37,7 +37,7 @@ class ConfigUI(QWidget):
         self.intervalSpin.setMinimum(500)
         self.intervalSpin.setMaximum(50000)
         self.intervalSpin.setSingleStep(500)
-        self.intervalSpin.setProperty("value", parent.interval)
+        self.intervalSpin.setProperty("value", args[2])
         self.intervalSpin.setFixedWidth(200)
         layout3 = QHBoxLayout()
         layout3.addWidget(self.intervalLabel)

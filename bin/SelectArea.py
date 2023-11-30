@@ -52,10 +52,8 @@ class WScreenShot(QWidget):
             self.endPoint = event.pos()
             self.close()
             ratio = self.detectscreen.devicePixelRatio()
-            print(self.startPoint,self.endPoint)
             self.startPoint,self.endPoint = QPoint(min(self.startPoint.x(),self.endPoint.x())*ratio,min(self.startPoint.y(),self.endPoint.y())*ratio),\
                                             QPoint(max(self.startPoint.x(),self.endPoint.x())*ratio,max(self.startPoint.y(),self.endPoint.y())*ratio)
-            print(self.startPoint,self.endPoint)
             self._signal.emit([self.detectscreen,QRect(self.startPoint,self.endPoint)])
 
 class SelectArea(QWidget):
