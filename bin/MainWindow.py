@@ -3,6 +3,7 @@ from ScreenWatcher import ScreenWatcher
 from PySide6.QtWidgets import QApplication, QMainWindow, QDockWidget
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QIcon,QPixmap,QCloseEvent
+import uuid
 
 import sys
 from qt_material import apply_stylesheet
@@ -17,27 +18,30 @@ class MainWindow(QMainWindow):
         self.setMinimumWidth(300)
         
         self.menu = self.menuBar()
-        self.addwidget = self.menu.addAction('Add Watcher')
-        self.addwidget.triggered.connect(self.create_dockwidget)
-        self.dockwidgets = []
-        self.create_dockwidget()
-
-    def create_dockwidget(self):
-        idx = len(self.dockwidgets)
-        dockWidget = WatcherDock('Watcher '+str(idx+1),idx)
-        dockWidget.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
-        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, dockWidget)
-        self.dockwidgets.append(dockWidget)
-        dockWidget.closeSignal.connect(self.delete_dockwidget)
-        dockWidget.screenwatcher.resizeSignal.connect(self.adjustSize)
+        self.addWidget = self.menu.addAction('Add Watcher')
+        self.addWidget.triggered.connect(self.createDockWidget)
+        self.dockWidgets = []
+        self.createDockWidget()
     
-    def delete_dockwidget(self,index):
-        print(index)
-        self.dockwidgets.remove(self.dockwidgets[index])
-        for idx,wighet  in enumerate(self.dockwidgets):
-            wighet.setWindowTitle('Watcher '+str(idx+1))
-            wighet.setIndex(idx)
 
+
+    def createDockWidget(self):
+        uid = uuid.uuid1().hex
+        newDockWidget = WatcherDock(uid)
+        newDockWidget.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, newDockWidget)
+        self.dockWidgets.append(newDockWidget)
+        newDockWidget.closeSignal.connect(self.delete_dockwidget)
+        newDockWidget.screenWatcher.resizeSignal.connect(self.adjustSize)
+        print(newDockWidget.uid,' created')
+    
+    def delete_dockwidget(self,uid):
+        for idx,dockWidget in enumerate(self.dockWidgets):
+            if dockWidget.uid == uid:
+                break
+        self.dockWidgets.remove(self.dockWidgets[idx])
+        self.allAjustSize()
+        print(uid,' deleted')
     # def exit_change(self,lst):  # 放到核心类里
     #     self.exittype = lst[0]
     #     if lst[1]:
@@ -46,23 +50,28 @@ class MainWindow(QMainWindow):
     def closeEvent(self, event):
         event.ignore()
         self.hide()
+    
+    def allAjustSize(self):
+        for dockWidget in self.dockWidgets:
+            dockWidget.screenWatcher.adjustSize()
+            dockWidget.adjustSize()
+        self.adjustSize()
         
 
 class WatcherDock(QDockWidget):
-    closeSignal = Signal(int)
-    def __init__(self,name,idx):
-        super().__init__(name)
-        self.idx = idx
-        self.screenwatcher = ScreenWatcher(self.idx)
-        self.setWidget(self.screenwatcher)
+    closeSignal = Signal(str)
+    def __init__(self,uid):
+        #self.name = 'New Watcher'
+        super().__init__()
+        self.uid = uid
+        self.screenWatcher = ScreenWatcher()
+        self.screenWatcher.setUid(self.uid)
+        self.screenWatcher.setOuterChangeSizeFunction(self.adjustSize)
+        self.setWidget(self.screenWatcher)
         
     def closeEvent(self, event: QCloseEvent) -> None:
-        self.closeSignal.emit(self.idx)
+        self.closeSignal.emit(self.uid)
         return super().closeEvent(event)
-    
-    def setIndex(self,idx):
-        self.idx =idx
-        self.screenwatcher.setIndex(idx)
 
 
 if __name__ == "__main__":

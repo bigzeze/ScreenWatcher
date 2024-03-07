@@ -1,12 +1,11 @@
 import configparser
 class Configure():
-    def __init__(self,index) -> None:
+    def __init__(self,uid) -> None:
         self.config = configparser.ConfigParser()
-        self.config_path = "localalert.ini"
-        self.widgetIndex = index
+        self.uid = uid
+        self.path = '../configs/'+ self.uid + ".ini"
 
         self.templetePath = ''
-
         self.audioPath = ''
 
         self.screenIndex = None
@@ -16,20 +15,34 @@ class Configure():
         self.endy = None
 
         self.interval = '2000'
+    
+    def setTempletePath(self,templetePath):
+        self.templetePath = templetePath
 
-    def setIndex(self,idx):
-        self.widgetIndex = idx
-        self.writeconfig()
+    def setAudioPath(self,audioPath):
+        self.audioPath =  audioPath
+
+    def setScreenIndex(self,screenIndex):
+        self.screenIndex = screenIndex
+
+    def setScreenArea(self,position):
+        self.startx = position['startx']
+        self.starty = position['starty']
+        self.endx = position['endx']
+        self.endy = position['endy']
+    
+    def setInterval(self,interval):
+        self.interval = interval
 
     def readconfig(self):
         try:
-            self.config.read(self.config_path, encoding="utf-8")
+            self.config.read(self.path, encoding="utf-8")
         except:
             print('failure: openconfig')
             return
 
         try:
-            section = 'watcher'+str(self.widgetIndex)
+            section = 'watcher'+str(self.uid)
             self.templetePath = self.config.get(section,'templetePath')
             self.audioPath = self.config.get(section,'audioPath')
             self.startx = self.config.getint(section,'startx')
@@ -42,9 +55,9 @@ class Configure():
             pass
     def writeconfig(self):
         try:
-            section = 'watcher'+str(self.widgetIndex)
+            section = 'watcher'+str(self.uid)
             with open(self.config_path):
-                
+                pass
         except:
             print('failure: writeconfig')
             return

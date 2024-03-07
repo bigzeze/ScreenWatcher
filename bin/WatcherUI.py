@@ -38,3 +38,4 @@ class WatcherUI(QWidget):
     def resizeEvent(self, event: QResizeEvent) -> None:
         self.resizeSignal.emit()
         return super().resizeEvent(event)
+

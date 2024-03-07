@@ -1,7 +1,7 @@
 
 from WatcherUI import WatcherUI
 from SelectArea import SelectArea
-from Configure import Configure
+#from Configure import Configure
 from ConfigUI import ConfigUI
 from ImageTools import *
 from PySide6.QtWidgets import QApplication,QMessageBox
@@ -14,13 +14,14 @@ import logging
 import time
 import sys
 
-class ScreenWatcher(WatcherUI,Configure):
-    def __init__(self,*args) -> None:
-        super(ScreenWatcher,self).__init__(*args)
+class ScreenWatcher(WatcherUI):
+    def __init__(self) -> None:
+        super(ScreenWatcher,self).__init__()
+        
         self.watchStatus = False
         self.matched = False
-
-        self.readconfig()
+        
+        #self.readconfig()
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.screenDetect)
@@ -30,11 +31,15 @@ class ScreenWatcher(WatcherUI,Configure):
         self.cvimg = None
         logging.basicConfig(level=logging.INFO,filename='log.txt',filemode='a')
 
-
-
         #self.loadConfig()
-        self.changeSetting([self.templetePath,self.audioPath,self.interval])
+        #self.changeSetting([self.templetePath,self.audioPath,self.interval])
         #self.changeArea()
+
+    def setOuterChangeSizeFunction(self,func):
+        self.outerChangeSizeFunc = func
+    
+    def outerChangeSize(self):
+        self.outerChangeSizeFunc()
 
     def startWatch(self):
         if self.detectRect == None:
@@ -117,6 +122,7 @@ class ScreenWatcher(WatcherUI,Configure):
         self.screenShoot()
         self.graphLabel.setPixmap(self.qtpixmap)
         self.adjustSize()
+        self.outerChangeSizeFunc()
 
     def loadImages(self):
         self.templetes.clear()
