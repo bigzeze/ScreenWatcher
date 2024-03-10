@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![icon](.\icons\icon.ico)
+![icon](icons/icon.png)
 
 ScreenWatcher is a desktop application that replace you staring at the screen. When a template you specified appears in a specific area of the screen, ScreenWatcher will make a sound to alert you.
 
@@ -20,9 +20,9 @@ First, clone the code.
 git clone git@github.com:bigzeze/ScreenWatcher.git
 ```
 
-Then, prepare the environment. ScreenWatcher is developed under Python 3.10.0. 
+Then, prepare the environment. ScreenWatcher is developed under Python 3.10.0.
 
-You can automatically install the requirements by runing the  command below or install manually according to the requirements.txt. 
+You can automatically install the requirements by runing the  command below or install manually according to the requirements.txt.
 
 ```cmd
 pip install -r requirements.txt
@@ -36,17 +36,17 @@ python src/ScreenWatcher.py
 
 ### Through Exe File
 
-Make sure that '_internal' and 'icons'  directories are not lost. 
+Make sure that '_internal' and 'icons'  directories are not lost.
 
 Then double click the file 'ScreenWatcher.exe'.
 
 ### Usage
 
-Add multiple watchers, click 'Setting' to name them and set up the templates, alert audio,and detect interval separately. 
+Add multiple watchers, click 'Setting' to name them and set up the templates, alert audio,and detect interval separately.
 
-Click on the 'Select Area' button, hold down the mouse to slide over an area where you would like the watcher to stare at. 
+Click on the 'Select Area' button, hold down the mouse to slide over an area where you would like the watcher to stare at.
 
-Push the 'Start Watch' button to start each screen watcher, and push the 'End Watch' to stop. 
+Push the 'Start Watch' button to start each screen watcher, and push the 'End Watch' to stop.
 
 Right click  the tray icon and click 'quit' to close the software.
 
@@ -56,7 +56,7 @@ The detect log is saved in 'log.txt'.
 
 ## 介绍
 
-![icon](.\icons\icon.ico)
+![icon](icons/icon.png)
 
 **屏幕监控器**是一个桌面程序，用于代替您盯着屏幕。当指定的图像出现在屏幕的特定区域时，屏幕监控器会发出声音提醒您。
 
@@ -96,7 +96,7 @@ python src/ScreenWatcher.py
 
 ### 使用
 
-添加多个监控器，点击Setting按钮，设置每个监控器的名称、模版、提醒声音和检测时间间隔。 
+添加多个监控器，点击Setting按钮，设置每个监控器的名称、模版、提醒声音和检测时间间隔。
 
 点击Select Area按钮，按住鼠标拖出你想要监控的屏幕区域。
 
@@ -105,6 +105,3 @@ python src/ScreenWatcher.py
 右键点击任务栏图标，按quit关闭程序。
 
 检测日志保存在log.txt文件。
-
-
-
