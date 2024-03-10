@@ -1,7 +1,6 @@
 from PySide6.QtWidgets import QApplication,QWidget,QGroupBox,QLabel,QPushButton,QVBoxLayout,QHBoxLayout,QFileDialog,QMessageBox,QSpinBox,QLineEdit
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QIcon,QPixmap
-import resources
 import sys
 
 class ConfigUI(QWidget):
@@ -10,7 +9,7 @@ class ConfigUI(QWidget):
         super(ConfigUI,self).__init__()
         self.args = args
         self.name = args[0]
-        self.templetePath = args[1]
+        self.templatePath = args[1]
         self.audioPath = args[2]
         self.interval = args[3]
 
@@ -29,15 +28,15 @@ class ConfigUI(QWidget):
         self.nameGroup.setLayout(layout0)
         self.nameGroup.setTitle('Watcher Nmae')
 
-        self.templeteLineEdit = QLineEdit(self.templetePath)
-        self.templeteButton = QPushButton('select templetes')
-        self.templeteButton.setFixedWidth(200)
+        self.templateLineEdit = QLineEdit(self.templatePath)
+        self.templateButton = QPushButton('select templates')
+        self.templateButton.setFixedWidth(200)
         layout1 = QHBoxLayout()
-        layout1.addWidget(self.templeteLineEdit)
-        layout1.addWidget(self.templeteButton)
-        self.templeteGroup = QGroupBox()
-        self.templeteGroup.setLayout(layout1)
-        self.templeteGroup.setTitle('Templete Path')
+        layout1.addWidget(self.templateLineEdit)
+        layout1.addWidget(self.templateButton)
+        self.templateGroup = QGroupBox()
+        self.templateGroup.setLayout(layout1)
+        self.templateGroup.setTitle('template Path')
 
         self.audioLineEdit = QLineEdit(self.audioPath)
         self.audioButton = QPushButton('select audio')
@@ -67,19 +66,19 @@ class ConfigUI(QWidget):
 
         layout = QVBoxLayout()
         layout.addWidget(self.nameGroup)
-        layout.addWidget(self.templeteGroup)
+        layout.addWidget(self.templateGroup)
         layout.addWidget(self.audioGroup)
         layout.addWidget(self.intervalGroup)
         layout.addWidget(self.submitButton)
         self.setLayout(layout)
 
-        self.templeteButton.clicked.connect(self.templeteButtonClick)
+        self.templateButton.clicked.connect(self.templateButtonClick)
         self.audioButton.clicked.connect(self.audioButtonClick)
         self.submitButton.clicked.connect(self.submitButtonClick)
     
-    def templeteButtonClick(self):
-        self.templetePath = QFileDialog.getExistingDirectory(self,'Select Path','./')
-        self.templeteLineEdit.setText(self.templetePath)
+    def templateButtonClick(self):
+        self.templatePath = QFileDialog.getExistingDirectory(self,'Select Path','./')
+        self.templateLineEdit.setText(self.templatePath)
         self.adjustSize()
 
     def audioButtonClick(self):
@@ -88,10 +87,10 @@ class ConfigUI(QWidget):
         self.adjustSize()
     
     def submitButtonClick(self):
-        if self.audioPath=='' or self.templetePath=='':
-            QMessageBox.warning(self,'Warning','Both templetes and audio paths should be designated',QMessageBox.StandardButton.Ok)
+        if self.audioPath=='' or self.templatePath=='':
+            QMessageBox.warning(self,'Warning','Both templates and audio paths should be designated',QMessageBox.StandardButton.Ok)
         else:
-            self._signal.emit([self.nameLineEdit.text(),self.templetePath,self.audioPath,self.intervalSpin.text()])
+            self._signal.emit([self.nameLineEdit.text(),self.templatePath,self.audioPath,self.intervalSpin.text()])
             self.close()
 
 

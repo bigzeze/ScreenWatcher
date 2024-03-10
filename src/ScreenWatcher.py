@@ -4,9 +4,7 @@ from Configure import Configure
 from PySide6.QtWidgets import QApplication, QMainWindow, QDockWidget
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QIcon,QPixmap,QCloseEvent
-import multiprocessing
 import uuid
-import resources
 
 import sys
 from qt_material import apply_stylesheet
@@ -121,7 +119,6 @@ class WatcherDock(QDockWidget):
 
 
 if __name__ == "__main__":
-    multiprocessing.freeze_support()
     app = QApplication(sys.argv) 
     apply_stylesheet(app,theme='light_cyan.xml')
     widget = MainWindow() 

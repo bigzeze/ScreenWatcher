@@ -2,7 +2,6 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication,QWidget,QLabel,QPushButton,QVBoxLayout,QHBoxLayout
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QResizeEvent
-import resources
 import sys
 
 class WatcherUI(QWidget):

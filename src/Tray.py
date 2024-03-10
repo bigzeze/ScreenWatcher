@@ -1,6 +1,5 @@
 from PySide6.QtWidgets import QWidget,QMenu,QSystemTrayIcon
 from PySide6.QtGui import QIcon,QPixmap,QAction
-import resources
 
 class Tray(QWidget):
     def __init__(self, app, window):

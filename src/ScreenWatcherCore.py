@@ -33,17 +33,17 @@ class ScreenWatcher(WatcherUI):
 
         self.timer = QTimer()
         self.timer.timeout.connect(self.screenDetect)
-        self.templetes = []
+        self.templates = []
         self.detectRect = None
         self.qtpixmap = None
         self.cvimg = None
         logging.basicConfig(level=logging.INFO,filename='log.txt',filemode='a',encoding='utf-8')
 
         #self.loadConfig()
-        #self.changeSetting([self.templetePath,self.audioPath,self.interval])
+        #self.changeSetting([self.templatePath,self.audioPath,self.interval])
         #self.changeArea()
 
-        self.templetePath = None
+        self.templatePath = None
         self.audioPath = None
         self.screenIndex = None
         self.detectRect = None
@@ -62,7 +62,7 @@ class ScreenWatcher(WatcherUI):
             self.name = self.uid
             print(self.uid,' does not have saved name')
         try:
-            self.templetePath = configure[self.uid]['templetePath']
+            self.templatePath = configure[self.uid]['templatePath']
             self.loadImages()
         except:
             print(self.uid,' does not have saved imagepath')
@@ -110,8 +110,8 @@ class ScreenWatcher(WatcherUI):
         if self.detectRect == None:
             QMessageBox.warning(self, 'Warning', 'Detecting area not asgined.')
             return
-        if self.templetes == []:  
-            QMessageBox.warning(self, 'Warning', 'Templete path not asgined.')
+        if self.templates == []:  
+            QMessageBox.warning(self, 'Warning', 'template path not asgined.')
             return
         if self.audioPath == '' or None:
             QMessageBox.warning(self,'Warning','Audio path not asgined.')
@@ -135,7 +135,7 @@ class ScreenWatcher(WatcherUI):
 
     def screenDetect(self):
         self.screenShoot() 
-        matched = self.templeteMatch()  
+        matched = self.templateMatch()  
         self.showImage()
         if matched:
             self.matchedTrigger()
@@ -148,11 +148,11 @@ class ScreenWatcher(WatcherUI):
         self.myresize()
 
 
-    def templeteMatch(self):  
+    def templateMatch(self):  
         tag = False
-        for templete in self.templetes:
-            w,h =np.shape(templete)[:-1]
-            res = cv2.matchTemplate(self.cvimg, templete, cv2.TM_CCORR_NORMED)
+        for template in self.templates:
+            w,h =np.shape(template)[:-1]
+            res = cv2.matchTemplate(self.cvimg, template, cv2.TM_CCORR_NORMED)
             threshold = 0.99
             loc = np.where( res >= threshold)
             for pt in zip(*loc[::-1]):
@@ -168,7 +168,7 @@ class ScreenWatcher(WatcherUI):
             self.matched = True
             self.notice()
             logging.info(time.strftime('%y/%m/%d %H:%M:%S ') + self.name + ' Temlete matched.')
-        self.noticeLabel.setText('<font color=red>Templete Matched ' + time.strftime('%H:%M:%S') + '</font>')
+        self.noticeLabel.setText('<font color=red>template Matched ' + time.strftime('%H:%M:%S') + '</font>')
 
     def unmathcedTrigger(self):
         if self.matched == True:
@@ -180,7 +180,7 @@ class ScreenWatcher(WatcherUI):
         self.sound.play()
 
     def changeSetting(self,lst):
-        (self.name,self.templetePath,self.audioPath) = lst[:-1]
+        (self.name,self.templatePath,self.audioPath) = lst[:-1]
         self.outerRename()
         self.loadImages()
         self.loadSound()
@@ -188,7 +188,7 @@ class ScreenWatcher(WatcherUI):
         self.timer.setInterval(self.interval)
         config = self.config.config
         config[self.uid]['name'] = self.name
-        config[self.uid]['templetePath'] = self.templetePath
+        config[self.uid]['templatePath'] = self.templatePath
         config[self.uid]['audioPath'] = self.audioPath
         config[self.uid]['interval'] = str(self.interval)
         self.config.save()
@@ -208,10 +208,10 @@ class ScreenWatcher(WatcherUI):
         self.config.save()
 
     def loadImages(self):
-        self.templetes.clear()
-        filenames = os.listdir(self.templetePath)
+        self.templates.clear()
+        filenames = os.listdir(self.templatePath)
         for filename in filenames:
-            self.templetes.append(cv2.imread(self.templetePath + '/' +filename, 1))
+            self.templates.append(cv2.imread(self.templatePath + '/' +filename, 1))
     
     def loadSound(self):
         self.sound = pygame.mixer.Sound(self.audioPath)
@@ -229,7 +229,7 @@ class ScreenWatcher(WatcherUI):
 
     def configButtonClicked(self):
         self.endWatch()
-        self.configUI = ConfigUI([self.name,self.templetePath,self.audioPath,self.interval])
+        self.configUI = ConfigUI([self.name,self.templatePath,self.audioPath,self.interval])
         self.configUI.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.configUI.show()
         self.configUI._signal.connect(self.changeSetting)
