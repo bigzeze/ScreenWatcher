@@ -1,12 +1,13 @@
 from PySide6.QtWidgets import QWidget,QMenu,QSystemTrayIcon
 from PySide6.QtGui import QIcon,QPixmap,QAction
+import resources
 
 class Tray(QWidget):
     def __init__(self, app, window):
         super(Tray,self).__init__()
         self.__app = app
         self.__window = window
-        self.icon = QIcon(QPixmap('icon.ico'))
+        self.icon = QIcon(QPixmap('icons/icon.ico'))
 
         self.tray = QSystemTrayIcon()
         self.tray.setIcon(self.icon)

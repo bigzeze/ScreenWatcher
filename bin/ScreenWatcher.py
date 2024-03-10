@@ -1,164 +1,131 @@
+from Tray import Tray
+from ScreenWatcherCore import ScreenWatcher
+from Configure import Configure
+from PySide6.QtWidgets import QApplication, QMainWindow, QDockWidget
+from PySide6.QtCore import Qt,Signal
+from PySide6.QtGui import QIcon,QPixmap,QCloseEvent
+import multiprocessing
+import uuid
+import resources
 
-from WatcherUI import WatcherUI
-from SelectArea import SelectArea
-#from Configure import Configure
-from ConfigUI import ConfigUI
-from ImageTools import *
-from PySide6.QtWidgets import QApplication,QMessageBox
-from PySide6.QtCore import Qt,QTimer
-import cv2
-import numpy as np
-import os
-import playsound
-import logging
-import time
 import sys
+from qt_material import apply_stylesheet
 
-class ScreenWatcher(WatcherUI):
-    def __init__(self) -> None:
-        super(ScreenWatcher,self).__init__()
+class MainWindow(QMainWindow):
+    def __init__(self,*args,**kargs):
+        super().__init__(*args,**kargs)
+        self.setWindowTitle('Screen Watcher')
+        self.icon = QIcon(QPixmap('icons/icon.ico'))
+        self.setWindowIcon(self.icon)
+        self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
+        self.setMinimumWidth(300)
         
-        self.watchStatus = False
-        self.matched = False
+        self.menu = self.menuBar()
+        self.addWidget = self.menu.addAction('Add Watcher')
+        self.addWidget.triggered.connect(self.createDockWidget)
+
+        self.startButton = self.menu.addAction('Start All')
+        self.startButton.triggered.connect(self.startAll)
         
-        #self.readconfig()
+        self.stopButton = self.menu.addAction('Stop All')
+        self.stopButton.triggered.connect(self.stopAll)
 
-        self.timer = QTimer()
-        self.timer.timeout.connect(self.screenDetect)
-        self.templetes = []
-        self.detectRect = None
-        self.qtpixmap = None
-        self.cvimg = None
-        logging.basicConfig(level=logging.INFO,filename='log.txt',filemode='a')
+        self.dockWidgets = []
 
-        #self.loadConfig()
-        #self.changeSetting([self.templetePath,self.audioPath,self.interval])
-        #self.changeArea()
+        self.config = Configure()
+        self.loadSavedWidgets()
 
-    def setOuterChangeSizeFunction(self,func):
-        self.outerChangeSizeFunc = func
+    def loadSavedWidgets(self):
+        uids = self.config.config.sections()
+        for uid in uids:
+            self.loadDockWidget(uid)
+        if not uids:
+            self.createDockWidget()
+
+    def createDockWidget(self):
+        uid = uuid.uuid1().hex
+        self.config.addUid(uid)
+        newDockWidget = WatcherDock(self.config,uid)
+        newDockWidget.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, newDockWidget)
+        self.dockWidgets.append(newDockWidget)
+        self.dockWidgets[-1].resizeSignal.connect(self.adjustSize)
+        newDockWidget.closeSignal.connect(self.delete_dockwidget)
+        newDockWidget.screenWatcher.resizeSignal.connect(self.adjustSize)
+        print(newDockWidget.uid,' created')
+        
+    def loadDockWidget(self,uid):
+        newDockWidget = WatcherDock(self.config,uid)
+        newDockWidget.setAllowedAreas(Qt.DockWidgetArea.AllDockWidgetAreas)
+        self.addDockWidget(Qt.DockWidgetArea.LeftDockWidgetArea, newDockWidget)
+        self.dockWidgets.append(newDockWidget)
+        self.dockWidgets[-1].resizeSignal.connect(self.adjustSize)
+        newDockWidget.closeSignal.connect(self.delete_dockwidget)
+        newDockWidget.screenWatcher.resizeSignal.connect(self.adjustSize)
+        print(newDockWidget.uid,' created')
+
     
-    def outerChangeSize(self):
-        self.outerChangeSizeFunc()
+    def delete_dockwidget(self,uid):
+        for idx,dockWidget in enumerate(self.dockWidgets):
+            if dockWidget.uid == uid:
+                break
+        self.dockWidgets.remove(self.dockWidgets[idx])
+        self.config.removeUid(uid)
+        self.allAjustSize()
+        print(uid,' deleted')
+    # def exit_change(self,lst):  # 放到核心类里
+    #     self.exittype = lst[0]
+    #     if lst[1]:
+    #         self.writeconfig('exit')
 
-    def startWatch(self):
-        if self.detectRect == None:
-            QMessageBox.warning(self, 'Warning', 'Detecting area not asgined.')
-            return
-        if self.templetes == []:  
-            QMessageBox.warning(self, 'Warning', 'Templete path not asgined.')
-            return
-        if self.audioPath == '':
-            QMessageBox.warning(self,'Warning','Audio path not asgined.')
-            return 
-        
-        self.watchStatus = True
-        self.timer.start()
-        self.stateButtion.setText('End Watch')
-        logging.info(time.strftime('%y/%m/%d %H:%M:%S' + ' Start watching.'))
+    def closeEvent(self, event):
+        event.ignore()
+        self.hide()
     
-    def endWatch(self):
-        if self.watchStatus == True:
-            self.watchStatus = False
-            self.timer.stop()
-            self.stateButtion.setText('Start Watch')
-            self.noticeLabel.setText('')
-            logging.info(time.strftime('%y/%m/%d %H:%M:%S') + ' End watching.')
-
-    def screenDetect(self):
-        self.screenShoot() 
-        matched = self.templeteMatch()  
-        self.showImage()
-        if matched:
-            self.matchedTrigger()
-        else:
-            self.unmathcedTrigger()
-
-    def showImage(self):
-        self.qtpixmap = cvimg_to_qtpixmap(self.cvimg)
-        self.graphLabel.setPixmap(self.qtpixmap)
+    def allAjustSize(self):
+        for dockWidget in self.dockWidgets:
+            dockWidget.screenWatcher.adjustSize()
+            dockWidget.adjustSize()
         self.adjustSize()
-
-
-    def templeteMatch(self):  
-        tag = False
-        for templete in self.templetes:
-            w,h =np.shape(templete)[:-1]
-            res = cv2.matchTemplate(self.cvimg, templete, cv2.TM_CCORR_NORMED)
-            threshold = 0.99
-            loc = np.where( res >= threshold)
-            for pt in zip(*loc[::-1]):
-                cv2.rectangle(self.cvimg, pt, (pt[0] + w, pt[1] + h), (255,255,255), 2)
-                tag = True
-            #cv2.imwrite('res.png',self.cvimg)
-            #self.endWatch()
-            #break
-        return tag
-
-    def matchedTrigger(self):
-        if self.matched == False:
-            self.matched = True
-            self.notice()
-            logging.info(time.strftime('%y/%m/%d %H:%M:%S') + ' Temlete matched.')
-        self.noticeLabel.setText('<font color=red>Templete Matched ' + time.strftime('%H:%M:%S')+'</font>')
-
-    def unmathcedTrigger(self):
-        if self.matched == True:
-            self.matched = False
-            logging.info(time.strftime('%y/%m/%d %H:%M:%S') + ' Temlete disappeared.')
-        self.noticeLabel.setText('<font color=green>Watching ' + time.strftime('%H:%M:%S')+'</font>')
-
-    def notice(self):
-        playsound.playsound(self.audioPath)
-
-    def changeSetting(self,lst):
-        (self.templetePath,self.audioPath) = lst[:-1]
-        self.loadImages()
-        self.interval = eval(lst[-1])
-        self.timer.setInterval(self.interval)
     
-    def changeArea(self,lst):
-        (self.screenIndex,self.detectRect) = lst
-        self.screenShoot()
-        self.graphLabel.setPixmap(self.qtpixmap)
-        self.adjustSize()
-        self.outerChangeSizeFunc()
+    def startAll(self):
+        for widget in self.dockWidgets:
+            widget.screenWatcher.startWatch()
+    
+    def stopAll(self):
+        for widget in self.dockWidgets:
+            widget.screenWatcher.endWatch()
 
-    def loadImages(self):
-        self.templetes.clear()
-        filenames = os.listdir(self.templetePath)
-        for filename in filenames:
-            self.templetes.append(cv2.imread(self.templetePath + '/' +filename, 1))
+class WatcherDock(QDockWidget):
+    closeSignal = Signal(str)
+    resizeSignal = Signal()
+    def __init__(self,config,uid):
+        #self.name = 'New Watcher'
+        super().__init__(uid)
+        self.config = config
+        self.uid = uid
+        self.screenWatcher = ScreenWatcher(self.config,self.uid)
+        self.screenWatcher.setOuterChangeSizeFunction(self.adjustSize)
+        self.screenWatcher.setOuterRenameFunction(self.setWindowTitle)
+        self.screenWatcher.resizeSignal.connect(self.swResize)
+        self.screenWatcher.getConfig()
+        self.setWidget(self.screenWatcher)
 
-    def screenShoot(self):
-        screenshot = QApplication.screens()[self.screenIndex].grabWindow(0)
-        self.qtpixmap = screenshot.copy(self.detectRect)
-        self.cvimg = qtpixmap_to_cvimg(self.qtpixmap)
-
-    def areaButtonClicked(self):
-        self.endWatch()
-        self.selectArea = SelectArea()
-        self.selectArea.show()
-        self.selectArea._signal.connect(self.changeArea)
-
-    def configButtonClicked(self):
-        self.endWatch()
-        self.configUI = ConfigUI([self.templetePath,self.audioPath,self.interval])
-        self.configUI.setWindowModality(Qt.WindowModality.ApplicationModal)
-        self.configUI.show()
-        self.configUI._signal.connect(self.changeSetting)
-
-    def stateBUttionClicked(self):
-        if self.watchStatus == False:
-            self.startWatch()
-        else:
-            self.endWatch()
+        
+    def closeEvent(self, event: QCloseEvent) -> None:
+        self.closeSignal.emit(self.uid)
+        return super().closeEvent(event)
+    
+    def swResize(self):
+        self.resizeSignal.emit()
 
 
 if __name__ == "__main__":
-    app = QApplication(sys.argv)  
-
-    widget = ScreenWatcher()
-    widget.show()
+    multiprocessing.freeze_support()
+    app = QApplication(sys.argv) 
+    apply_stylesheet(app,theme='light_cyan.xml')
+    widget = MainWindow() 
+    widget.show() 
+    tray = Tray(app=app,window=widget)
 
     sys.exit(app.exec()) 

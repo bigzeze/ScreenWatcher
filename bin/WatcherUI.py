@@ -2,6 +2,7 @@ from PySide6.QtGui import QPixmap
 from PySide6.QtWidgets import QApplication,QWidget,QLabel,QPushButton,QVBoxLayout,QHBoxLayout
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QResizeEvent
+import resources
 import sys
 
 class WatcherUI(QWidget):
@@ -9,16 +10,12 @@ class WatcherUI(QWidget):
     def __init__(self) -> None:
         super().__init__()
         self.graphLabel = QLabel()
-        self.graphLabel.setPixmap(QPixmap('icon.ico'))
+        self.graphLabel.setPixmap(QPixmap('icons/icon.ico'))
         self.noticeLabel = QLabel()
         self.noticeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.areaButton = QPushButton('Select Area')
         self.configButton = QPushButton('Setting')
         self.stateButtion = QPushButton('Start Watch')
-
-        self.areaButton.clicked.connect(self.areaButtonClicked)
-        self.configButton.clicked.connect(self.configButtonClicked)
-        self.stateButtion.clicked.connect(self.stateBUttionClicked)
 
         hlayout = QHBoxLayout(self)
         vlayout1 = QVBoxLayout(self)

@@ -1,63 +1,31 @@
 import configparser
+import os
 class Configure():
-    def __init__(self,uid) -> None:
+    def __init__(self) -> None:
         self.config = configparser.ConfigParser()
-        self.uid = uid
-        self.path = '../configs/'+ self.uid + ".ini"
-
-        self.templetePath = ''
-        self.audioPath = ''
-
-        self.screenIndex = None
-        self.startx = None
-        self.starty = None
-        self.endx = None
-        self.endy = None
-
-        self.interval = '2000'
+        self.path = 'config.ini'
+        self.readConfig()
     
-    def setTempletePath(self,templetePath):
-        self.templetePath = templetePath
-
-    def setAudioPath(self,audioPath):
-        self.audioPath =  audioPath
-
-    def setScreenIndex(self,screenIndex):
-        self.screenIndex = screenIndex
-
-    def setScreenArea(self,position):
-        self.startx = position['startx']
-        self.starty = position['starty']
-        self.endx = position['endx']
-        self.endy = position['endy']
-    
-    def setInterval(self,interval):
-        self.interval = interval
-
-    def readconfig(self):
-        try:
+    def readConfig(self):
+        if os.path.exists(self.path):
             self.config.read(self.path, encoding="utf-8")
-        except:
-            print('failure: openconfig')
-            return
+        else:
+            with open(self.path,'w',encoding='utf-8') as f:
+                f.write('')
+            print('Failure: open config')
 
+    def addUid(self,uid):
+        self.config.add_section(uid)
+        self.save()
+    
+    def removeUid(self,uid):
+        self.config.remove_section(uid)
+        self.save()
+
+    def save(self):
         try:
-            section = 'watcher'+str(self.uid)
-            self.templetePath = self.config.get(section,'templetePath')
-            self.audioPath = self.config.get(section,'audioPath')
-            self.startx = self.config.getint(section,'startx')
-            self.starty = self.config.getint(section,'starty')
-            self.endx = self.config.getint(section,'endx')
-            self.endy = self.config.getint(section,'endy')
-            self.interval = self.config.getint(section,'interval')
+            with open(self.path,'w',encoding='utf-8') as f:
+                self.config.write(f)
         except:
-            print('failure: readconfig')
-            pass
-    def writeconfig(self):
-        try:
-            section = 'watcher'+str(self.uid)
-            with open(self.config_path):
-                pass
-        except:
-            print('failure: writeconfig')
+            print('Failure: writeconfig')
             return
