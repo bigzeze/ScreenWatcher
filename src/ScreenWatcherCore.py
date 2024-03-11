@@ -47,7 +47,8 @@ class ScreenWatcher(WatcherUI):
         self.audioPath = None
         self.screenIndex = None
         self.detectRect = None
-        self.interval = None
+        self.interval = 2000
+        self.threshold = 0.99
 
         self.name = self.uid
     
@@ -89,6 +90,10 @@ class ScreenWatcher(WatcherUI):
             self.timer.setInterval(self.interval)
         except:
             print(self.uid,' does not have saved interval')
+        try:
+            self.threshold = eval(configure[self.uid]['threshold'])
+        except:
+            print(self.uid,' does not have saved threshold')
 
 
     def setOuterChangeSizeFunction(self,func):
@@ -115,9 +120,6 @@ class ScreenWatcher(WatcherUI):
             return
         if self.audioPath == '' or None:
             QMessageBox.warning(self,'Warning','Audio path not asgined.')
-            return 
-        if self.interval == None:
-            QMessageBox.warning(self,'Warning','interval not asgined.')
             return 
         
         self.watchStatus = True
@@ -153,8 +155,7 @@ class ScreenWatcher(WatcherUI):
         for template in self.templates:
             w,h =np.shape(template)[:-1]
             res = cv2.matchTemplate(self.cvimg, template, cv2.TM_CCORR_NORMED)
-            threshold = 0.99
-            loc = np.where( res >= threshold)
+            loc = np.where( res >= self.threshold)
             for pt in zip(*loc[::-1]):
                 cv2.rectangle(self.cvimg, pt, (pt[0] + h, pt[1] + w), (20,50,155), 2)
                 tag = True
@@ -180,17 +181,17 @@ class ScreenWatcher(WatcherUI):
         self.sound.play()
 
     def changeSetting(self,lst):
-        (self.name,self.templatePath,self.audioPath) = lst[:-1]
+        (self.name,self.templatePath,self.audioPath,self.interval,self.threshold) = lst
         self.outerRename()
         self.loadImages()
         self.loadSound()
-        self.interval = eval(lst[-1])
         self.timer.setInterval(self.interval)
         config = self.config.config
         config[self.uid]['name'] = self.name
         config[self.uid]['templatePath'] = self.templatePath
         config[self.uid]['audioPath'] = self.audioPath
         config[self.uid]['interval'] = str(self.interval)
+        config[self.uid]['threshold'] = str(self.threshold)
         self.config.save()
     
     def changeArea(self,lst):
@@ -229,7 +230,7 @@ class ScreenWatcher(WatcherUI):
 
     def configButtonClicked(self):
         self.endWatch()
-        self.configUI = ConfigUI([self.name,self.templatePath,self.audioPath,self.interval])
+        self.configUI = ConfigUI([self.name,self.templatePath,self.audioPath,self.interval,self.threshold])
         self.configUI.setWindowModality(Qt.WindowModality.ApplicationModal)
         self.configUI.show()
         self.configUI._signal.connect(self.changeSetting)
