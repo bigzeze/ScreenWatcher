@@ -52,6 +52,12 @@ Right click  the tray icon and click 'quit' to close the software.
 
 The detect log is saved in 'log.txt'.
 
+## Update Log
+
+v1.0  first release
+
+v1.1  add settings of template detection threshold
+
 # 屏幕监控器
 
 ## 介绍
@@ -105,3 +111,9 @@ python src/ScreenWatcher.py
 右键点击任务栏图标，按quit关闭程序。
 
 检测日志保存在log.txt文件。
+
+## 更新日志
+
+v1.0  发布
+
+v1.1  可以设置模版检测的阈值
