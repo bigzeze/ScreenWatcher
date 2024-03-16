@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![icon](.\icons\icon.ico)
+![icon](icons\icon.ico)
 
 ScreenWatcher is a desktop application that replace you staring at the screen. When a template you specified appears in a specific area of the screen, ScreenWatcher will make a sound to alert you.
 
