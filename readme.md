@@ -4,9 +4,9 @@
 
 ![icon](./icons/icon.ico)
 
-ScreenWatcher is a desktop application that replace you staring at the screen. When a template you specified appears in a specific area of the screen, ScreenWatcher will make a sound to alert you.
+ScreenWatcher is a desktop application that freeing you from staring at the screen. You can use it when you have to constantly pay attention to certain images that may appear on the screen. When the image that matches the specified template appears in a specific area of the screen, ScreenWatcher will make a sound to alert you.
 
-This is a python project made by Pyside6 and Opencv. Pyside6 provides the window user interface. The template matching API of OpenCV is utilized for the purpose of object detection that aligns with your visual focus.
+ScreenWatcher is a python project based on Pyside6 and Opencv. Pyside6 provides the window user interface. The template matching API of OpenCV is utilized for the purpose of object detection that aligns with your visual focus.
 
 ## Installation and Usage Instructions
 
@@ -36,13 +36,13 @@ python src/ScreenWatcher.py
 
 ### Through Exe File
 
-Make sure that '_internal' and 'icons'  directories are not lost.
+Make sure that '_internal' and 'icons'  directories and their contents exists.
 
-Then double click the file 'ScreenWatcher.exe'.
+Then double click the file 'ScreenWatcher.exe' to start, all the parameters can be configed through the UI.
 
 ### Usage
 
-Add multiple watchers, click 'Setting' to name them and set up the templates, alert audio,and detect interval separately.
+To add multiple watchers, click 'Setting' to name them and set up the templates, alert audio,and detect interval separately.
 
 Click on the 'Select Area' button, hold down the mouse to slide over an area where you would like the watcher to stare at.
 
@@ -58,19 +58,19 @@ v1.0  first release
 
 v1.1  add settings of template detection threshold
 
-# 屏幕监控器
+# 屏幕监视器
 
 ## 介绍
 
 ![icon](./icons/icon.ico)
 
-**屏幕监控器**是一个桌面程序，用于代替您盯着屏幕。当指定的图像出现在屏幕的特定区域时，屏幕监控器会发出声音提醒您。
+**屏幕监视器**是一个桌面程序，用于代替您盯着屏幕。当指定的图像出现在屏幕的特定区域时，屏幕监控器会发出声音提醒您。
 
 这是一个由Pyside6和Opencv制作的python项目。Pyside6提供了窗口用户界面。OpenCV的模板匹配 API用来检测屏幕上是否出现指定图像。
 
 ## 安装和使用
 
-您可以通过源代码或Releases中的exe文件启动**屏幕监控器**。
+您可以通过源代码或Releases中的exe文件启动**屏幕监视器**。
 
 ### 通过源代码
 
@@ -80,7 +80,7 @@ v1.1  add settings of template detection threshold
 git clone git@github.com:bigzeze/ScreenWatcher.git
 ```
 
-然后准备运行环境。**屏幕监控器**是在Python 3.10.0环境下开发的。
+然后准备运行环境。**屏幕监视器**是在Python 3.10.0环境下开发的。
 
 你可以通过运行以下命令自动安装环境，也可以根据requirements.txt手动配置环境。
 
