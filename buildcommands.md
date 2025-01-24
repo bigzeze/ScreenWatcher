@@ -1,5 +1,5 @@
 # MacOS
 
 ```shell
-pyinstaller src/ScreenWatcher.py -w --icon=icons/icon.icns --add-data icons:icons --add-data config.ini:. -y
+pyinstaller src/ScreenWatcher.py -w --icon=Resources/icons/icon.icns --add-data Resources/icons:icons --add-data config.ini:. -y
 ```
