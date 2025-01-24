@@ -2,7 +2,6 @@ from PySide6.QtWidgets import QApplication,QWidget,QGroupBox,QLabel,QPushButton,
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QIcon,QPixmap
 import sys
-from resourcepath import resource_path
 
 class ConfigUI(QWidget):
     _signal = Signal(list)
@@ -17,7 +16,7 @@ class ConfigUI(QWidget):
 
 
         self.setWindowTitle('Setting')
-        self.icon = QIcon(QPixmap(resource_path('../Resources/icons/configure.ico')))
+        self.icon = QIcon(QPixmap('../Resources/icons/configure.ico'))
         self.setWindowIcon(self.icon)
         self.setMinimumWidth(600)
 
