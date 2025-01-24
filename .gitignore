@@ -1,0 +1,6 @@
+build
+dist
+src/__pycache__
+config.ini
+log.txt
+ScreenWatcher.spec

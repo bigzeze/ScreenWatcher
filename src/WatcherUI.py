@@ -3,13 +3,16 @@ from PySide6.QtWidgets import QApplication,QWidget,QLabel,QPushButton,QVBoxLayou
 from PySide6.QtCore import Qt,Signal
 from PySide6.QtGui import QResizeEvent
 import sys
+from resourcepath import resource_path
+import os
 
 class WatcherUI(QWidget):
     resizeSignal = Signal()
     def __init__(self) -> None:
         super().__init__()
         self.graphLabel = QLabel()
-        self.graphLabel.setPixmap(QPixmap('icons/icon.ico'))
+        self.currentPath = os.path.dirname(os.path.abspath(__file__))
+        self.graphLabel.setPixmap(QPixmap(resource_path(self.currentPath+'/../Resources/icons/icon.ico')))
         self.noticeLabel = QLabel()
         self.noticeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.areaButton = QPushButton('Select Area')

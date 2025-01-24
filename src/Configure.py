@@ -1,9 +1,11 @@
 import configparser
 import os
+
 class Configure():
     def __init__(self) -> None:
         self.config = configparser.ConfigParser()
-        self.path = 'config.ini'
+        self.currentPath = os.path.dirname(os.path.abspath(__file__))
+        self.path = self.currentPath + '/../config.ini'
         self.readConfig()
     
     def readConfig(self):
@@ -12,7 +14,7 @@ class Configure():
         else:
             with open(self.path,'w',encoding='utf-8') as f:
                 f.write('')
-            print('Failure: open config')
+            #print('Failure: open config')
 
     def addUid(self,uid):
         self.config.add_section(uid)
@@ -27,5 +29,5 @@ class Configure():
             with open(self.path,'w',encoding='utf-8') as f:
                 self.config.write(f)
         except:
-            print('Failure: writeconfig')
+            #print('Failure: writeconfig')
             return

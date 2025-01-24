@@ -37,7 +37,12 @@ class ScreenWatcher(WatcherUI):
         self.detectRect = None
         self.qtpixmap = None
         self.cvimg = None
-        logging.basicConfig(level=logging.INFO,filename='log.txt',filemode='a',encoding='utf-8')
+
+        self.currentPath = os.path.dirname(os.path.abspath(__file__))
+        self.logfile = self.currentPath + '/../log.txt'
+        with open(self.logfile,'w') as f:
+            f.write('')
+        logging.basicConfig(level=logging.INFO,filename=self.logfile,filemode='w',encoding='utf-8')
 
         #self.loadConfig()
         #self.changeSetting([self.templatePath,self.audioPath,self.interval])
@@ -61,17 +66,19 @@ class ScreenWatcher(WatcherUI):
             configure[self.uid]['name'] = self.uid
             self.config.save()
             self.name = self.uid
-            print(self.uid,' does not have saved name')
+            #print(self.uid,' does not have saved name')
         try:
             self.templatePath = configure[self.uid]['templatePath']
             self.loadImages()
         except:
-            print(self.uid,' does not have saved imagepath')
+            #print(self.uid,' does not have saved imagepath')
+            pass
         try:
             self.audioPath = configure[self.uid]['audioPath']
             self.loadSound()
         except:
-            print(self.uid,' does not have saved audiopath')
+            #print(self.uid,' does not have saved audiopath')
+            pass
         try:
             self.screenIndex = eval(configure[self.uid]['screenIndex'])
             startx = eval(configure[self.uid]['startx'])
@@ -84,16 +91,19 @@ class ScreenWatcher(WatcherUI):
             self.myresize()
             self.outerChangeSize()
         except:
-            print(self.uid,' does not have saved capture positon')
+            #print(self.uid,' does not have saved capture positon')
+            pass
         try:
             self.interval = eval(configure[self.uid]['interval'])
             self.timer.setInterval(self.interval)
         except:
-            print(self.uid,' does not have saved interval')
+            #print(self.uid,' does not have saved interval')
+            pass
         try:
             self.threshold = eval(configure[self.uid]['threshold'])
         except:
-            print(self.uid,' does not have saved threshold')
+            #print(self.uid,' does not have saved threshold')
+            pass
 
 
     def setOuterChangeSizeFunction(self,func):
