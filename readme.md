@@ -2,7 +2,7 @@
 
 ## Introduction
 
-![icon](./icons/icon.ico)
+![icon](./Resources/icons/icon.ico)
 
 ScreenWatcher is a desktop application that freeing you from staring at the screen. You can use it when you have to constantly pay attention to certain images that may appear on the screen. When the image that matches the specified template appears in a specific area of the screen, ScreenWatcher will make a sound to alert you.
 
@@ -62,7 +62,7 @@ v1.1  add settings of template detection threshold
 
 ## 介绍
 
-![icon](./icons/icon.ico)
+![icon](./Resources/icons/icon.ico)
 
 **屏幕监视器**是一个桌面程序，用于代替您盯着屏幕。当指定的图像出现在屏幕的特定区域时，屏幕监控器会发出声音提醒您。
 
