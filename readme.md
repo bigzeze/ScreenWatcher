@@ -58,6 +58,8 @@ v1.0  first release
 
 v1.1  add settings of template detection threshold
 
+v1.2  add support for macos, dockwidget can be stacked when loaded.
+
 # 屏幕监视器
 
 ## 介绍
@@ -117,3 +119,5 @@ python src/ScreenWatcher.py
 v1.0  发布
 
 v1.1  可以设置模版检测的阈值
+
+v1.2  增加对mac系统的支持，窗口加载时可以堆叠起来。
