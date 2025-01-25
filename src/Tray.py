@@ -8,8 +8,10 @@ class Tray(QWidget):
         self.__app = app
         self.__window = window
         self.currentPath = os.path.dirname(os.path.abspath(__file__))
-        self.icon = QIcon(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
-
+        if os.name == 'posix':
+            self.icon = QIcon(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
+        if os.name == 'nt':
+            self.icon = QIcon(QPixmap('./Resources/icons/icon.ico')) # if you start via python the directory should be set as self.currentPath+'/../Resources/icons/icon.ico'
         self.tray = QSystemTrayIcon()
         self.tray.setIcon(self.icon)
         self.create_tray_menu()

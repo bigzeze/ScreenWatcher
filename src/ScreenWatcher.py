@@ -14,7 +14,10 @@ class MainWindow(QMainWindow):
         super().__init__(*args, **kargs)
         self.currentPath = os.path.dirname(os.path.abspath(__file__))
         self.setWindowTitle('Screen Watcher')
-        self.icon = QIcon(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
+        if os.name == 'posix':
+            self.icon = QIcon(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
+        if os.name == 'nt':
+            self.icon = QIcon(QPixmap('./Resources/icons/icon.ico')) # if you start via python the directory should be set as self.currentPath+'/../Resources/icons/icon.ico'
         self.setWindowIcon(self.icon)
         self.setWindowFlags(Qt.WindowMinimizeButtonHint | Qt.WindowCloseButtonHint)
         self.setMinimumWidth(300)

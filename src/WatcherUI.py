@@ -11,7 +11,10 @@ class WatcherUI(QWidget):
         super().__init__()
         self.graphLabel = QLabel()
         self.currentPath = os.path.dirname(os.path.abspath(__file__))
-        self.graphLabel.setPixmap(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
+        if os.name == 'posix':
+            self.graphLabel.setPixmap(QPixmap(self.currentPath+'/../Resources/icons/icon.ico'))
+        if os.name == 'nt':
+            self.graphLabel.setPixmap(QPixmap('./Resources/icons/icon.ico')) # if you start via python the directory should be set as self.currentPath+'/../Resources/icons/icon.ico'
         self.noticeLabel = QLabel()
         self.noticeLabel.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.areaButton = QPushButton('Select Area')
