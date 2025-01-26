@@ -228,7 +228,7 @@ class ScreenWatcher(WatcherUI):
         self.sound = pygame.mixer.Sound(self.audioPath)
 
     def screenShoot(self):
-        screenshot = QApplication.screens()[self.screenIndex].grabWindow(0)
+        screenshot = QApplication.screens()[self.screenIndex].grabWindow()
         self.qtpixmap = screenshot.copy(self.detectRect)
         self.cvimg = qtpixmap_to_cvimg(self.qtpixmap)
 
@@ -254,12 +254,3 @@ class ScreenWatcher(WatcherUI):
     def myresize(self):
         self.adjustSize()
         self.resizeSignal.emit()
-
-
-if __name__ == "__main__":
-    app = QApplication(sys.argv)  
-
-    widget = ScreenWatcher()
-    widget.show()
-
-    sys.exit(app.exec()) 
