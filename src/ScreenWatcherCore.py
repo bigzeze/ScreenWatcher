@@ -221,7 +221,10 @@ class ScreenWatcher(WatcherUI):
     def loadImages(self):
         self.templates.clear()
         filenames = os.listdir(self.templatePath)
+        print(filenames)
         for filename in filenames:
+            if '.png' not in filename:
+                continue
             self.templates.append(cv2.imread(self.templatePath + '/' +filename, 1))
     
     def loadSound(self):
